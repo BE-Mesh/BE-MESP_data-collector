@@ -2,13 +2,13 @@ from imports import fileStorage
 import re
 import sys
 import datetime
+import string
 
 
 
 
 def main():
 
-    #todo: eventuali altri check alla forma di sys.argv[1]
     global file_stor
     file_stor = fileStorage.FileStorage()
 
@@ -19,7 +19,6 @@ def main():
 
 
 def __process_line__(line):
-    #todo: processing dell'entry
     global file_stor
     timestamp = int(datetime.datetime.now().timestamp()*1000000)
 
@@ -32,14 +31,12 @@ def __process_line__(line):
             entry_to_store = str(timestamp)
             #todo: check on split_line[3] which must contain the ID of the ESP32
             for field in split_line[3:]:
-                processed_field = re.sub('[,]', '', field)
+                processed_field = ''.join(list(filter(lambda x: x in string.printable, field))) #remove non-printable characters
+                processed_field = re.sub('[,]|(\[0m)$', '', processed_field)
                 if len(processed_field) > 0:
                     entry_to_store = entry_to_store + ',' + processed_field
             entry_to_store = entry_to_store + '\n'
             file_stor.saveOnFile(entry_to_store)
-
-
-            #'[,](\[0m)$'
 
     pass
 
@@ -48,5 +45,3 @@ def __process_line__(line):
 
 if __name__ == "__main__":
     main()
-
-#sdsdI ssd BenchMark: ID la gall,ina ,,, fa, le uova

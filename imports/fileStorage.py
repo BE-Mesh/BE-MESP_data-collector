@@ -30,15 +30,6 @@ class FileStorage(metaclass=Singleton):
 
 
 
-
-
-
-
-
-
-
-
-
     def __checkValidityDIRName(self):
 
         if len(sys.argv) < 2:
