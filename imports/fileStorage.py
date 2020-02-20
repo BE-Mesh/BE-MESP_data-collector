@@ -23,8 +23,10 @@ class FileStorage(metaclass=Singleton):
 
 
 
-
-
+    def saveOnFile(self,content):
+        while self.file_descriptor == '':
+            pass
+        self.file_descriptor.write(content)
 
 
 
@@ -72,15 +74,5 @@ class FileStorage(metaclass=Singleton):
 
 
     def __initializeFile(self):
-        filename = self.directory_path + "/" + str(int(datetime.datetime.now().timestamp())) + "_" + str(randrange(100)) + str(randrange(100)) + ".txt"
+        filename = self.directory_path + "/" + str(int(datetime.datetime.now().timestamp())) + "_" + str(randrange(100)) + str(randrange(100)) + ".csv"
         self.file_descriptor = open(filename, 'a+')
-
-            #
-            # if(db_file_path.is_file()):
-            #     return 0, str(db_file_path)
-            # else:
-            #     err_code = '2C'
-            #     err_mess = 'NO DB FOUND!'
-            #     err_details = 'there is no DB with this path: ' + str(db_file_path) + ' please manually add it in ./results folder'
-            #     raise ValueError(err_code,err_mess,err_details)
-
