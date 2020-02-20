@@ -1,6 +1,9 @@
 from .utilities.singleton import Singleton
 from pathlib import Path
 import os
+import re
+from random import randrange
+import datetime
 
 import sys
 
@@ -9,10 +12,14 @@ class FileStorage(metaclass=Singleton):
 
     def __init__(self):
 
+        self.directory_path = ''
+        self.file_descriptor = ''
 
-        self.storage_dir = ''
+        self.__checkValidityDIRName()
 
-        res = self.__checkDIRexistence()
+        self.__initializeDIR()
+
+        self.__initializeFile()
 
         # if res[0] < 0:
         #     # res[0] != 0 means that an error occurred
@@ -28,19 +35,43 @@ class FileStorage(metaclass=Singleton):
         # self.dbManager = DatabaseManager(self.db_file_path_str)
 
 
-    def __checkDIRexistence(self):
+    def __checkValidityDIRName(self):
 
         if len(sys.argv) < 2:
             err_code = '1C'  #C stands for custom
             err_mess = 'NO DIRECTORY PASSED AS ARGUMENT'
             err_details = 'please pass the name of a directory where to store results as argument'
             raise ValueError(err_code,err_mess, err_details)
-        else:
-            script_root_path_str = str(Path(str(sys.argv[0])).absolute().parent.parent)
 
-            #print("AAAAhhh: ",script_root_path_str)
-                #todo:sanity check sul parametro sys.argv[1]
-            # db_file_path = Path(script_path_parent_str + "/results/" + sys.argv[1] + '.db').absolute()
+        dir_name_check = bool(re.match('^[a-zA-Z0-9\-_]+$', str(sys.argv[1])))
+
+        if not dir_name_check:
+            err_code = '2C'  # C stands for custom
+            err_mess = 'INVALID NAME FOR A DIRECTORY'
+            err_details = 'please pass a name containing only letters/numbers/-/_  and no whitespace '
+            raise ValueError(err_code, err_mess, err_details)
+
+
+
+
+    def __initializeDIR(self):
+
+        script_root_path_str = str(Path(str(sys.argv[0])).absolute().parent.parent)
+        dir_path = Path(script_root_path_str + "/results/1-dc-results/" + str(sys.argv[1])).absolute()
+        print("Checking if ./results/1-dc-results/" + str(sys.argv[1]) + " exists...")
+        try:
+            os.makedirs(dir_path)
+        except OSError:
+            print("/results/1-dc-results/" + str(sys.argv[1]) + " already exists")
+
+        print("DIR initialized")
+        self.directory_path = str(dir_path)
+
+
+    def __initializeFile(self):
+        filename = self.directory_path + "/" + str(int(datetime.datetime.now().timestamp())) + "_" + str(randrange(100)) + str(randrange(100)) + ".txt"
+        self.file_descriptor = open(filename, 'a+')
+
             #
             # if(db_file_path.is_file()):
             #     return 0, str(db_file_path)
