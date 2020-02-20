@@ -21,18 +21,20 @@ class FileStorage(metaclass=Singleton):
 
         self.__initializeFile()
 
-        # if res[0] < 0:
-        #     # res[0] != 0 means that an error occurred
-        #     err_code = '0C'  # C stands for custom
-        #     err_mess = 'Undefined'
-        #     err_details = 'Generic error'
-        #     raise ValueError(err_code, err_mess, err_details)
-        #
-        # self.db_file_path_str = res[1]
-        #
-        # #initialize DatabaseManager
-        # print("*** PATH: ",self.db_file_path_str)
-        # self.dbManager = DatabaseManager(self.db_file_path_str)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     def __checkValidityDIRName(self):
@@ -61,8 +63,9 @@ class FileStorage(metaclass=Singleton):
         print("Checking if ./results/1-dc-results/" + str(sys.argv[1]) + " exists...")
         try:
             os.makedirs(dir_path)
-        except OSError:
-            print("/results/1-dc-results/" + str(sys.argv[1]) + " already exists")
+        except OSError as e:
+            print("/results/1-dc-results/" + str(sys.argv[1]) + " already exists ")
+
 
         print("DIR initialized")
         self.directory_path = str(dir_path)
