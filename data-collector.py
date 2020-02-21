@@ -12,35 +12,31 @@ def main():
     global file_stor
     file_stor = fileStorage.FileStorage()
 
-    thread_list = []
+    #thread_list = []
     for line in sys.stdin:
+        ts = datetime.datetime.now().timestamp()
         sys.stdout.write(line) # print the monitor line on the stdout,in order to make the script transparent
-        line_parser_t = myThread(line)
+        line_parser_t = myThread(line,ts)
         line_parser_t.start()
-        thread_list.append(line_parser_t)
+        #thread_list.append(line_parser_t)
 
-
-
-
-
-
-    for t in thread_list:
-        t.join()
-    print("Exiting Main Thread")
+    #for t in thread_list:
+    #    t.join()
+    print("Exiting Main Thread of data-collector")
 
 
 class myThread (threading.Thread):
-    def __init__(self, line):
+    def __init__(self, line,ts):
         threading.Thread.__init__(self)
         self.line = line
-
+        self.ts = ts
 
     def run(self):
-        __process_line__(str(self.line))
+        __process_line__(str(self.line), self.ts)
 
-def __process_line__(line):
+def __process_line__(line,ts):
     global file_stor
-    timestamp = int(datetime.datetime.now().timestamp()*1000000)
+    timestamp = int(ts*1000000)
 
 
     split_line = line.rstrip().split(" ")
