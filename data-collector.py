@@ -3,20 +3,40 @@ import re
 import sys
 import datetime
 import string
+import threading
 
-
-
+threadLock = threading.Lock()
 
 def main():
 
     global file_stor
     file_stor = fileStorage.FileStorage()
 
+    thread_list = []
     for line in sys.stdin:
         sys.stdout.write(line) # print the monitor line on the stdout,in order to make the script transparent
-        __process_line__(str(line))
+        line_parser_t = myThread(line)
+        line_parser_t.start()
+        thread_list.append(line_parser_t)
 
 
+
+
+
+
+    for t in thread_list:
+        t.join()
+    print("Exiting Main Thread")
+
+
+class myThread (threading.Thread):
+    def __init__(self, line):
+        threading.Thread.__init__(self)
+        self.line = line
+
+
+    def run(self):
+        __process_line__(str(self.line))
 
 def __process_line__(line):
     global file_stor
@@ -36,7 +56,10 @@ def __process_line__(line):
                 if len(processed_field) > 0:
                     entry_to_store = entry_to_store + ',' + processed_field
             entry_to_store = entry_to_store + '\n'
+
+            threadLock.acquire()
             file_stor.saveOnFile(entry_to_store)
+            threadLock.release()
 
     pass
 
